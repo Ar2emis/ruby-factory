@@ -15,9 +15,7 @@ class Factory
     end
 
     def initialize(*args)
-      if args.count != members.count
-        raise ArgumentError, "wrong number of arguments (given #{args.count}, expected #{members.count})"
-      end
+      raise ArgumentError, "wrong number of arguments (given #{args.count}, expected #{length})" if args.count != length
 
       members.each_with_index { |property, index| instance_variable_set("@#{property}", args[index]) }
     end
