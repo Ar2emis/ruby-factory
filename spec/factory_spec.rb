@@ -1,16 +1,15 @@
 # frozen_string_literal: true
 
+require 'pry'
 require_relative '../lib/factory'
 
-RSpec.describe 'Factory' do
+RSpec.describe Factory do
   before do
-    if Object.constants.include?(:Customer)
-      Object.send(:remove_const, :Customer)
-    end
+    Object.send(:remove_const, :Customer) if Object.constants.include?(:Customer)
   end
 
   it 'creates factory in a namespace' do
-    Factory.new('Customer', :name, :address)
+    described_class.new('Customer', :name, :address)
 
     customer = Factory::Customer.new('Dave', '123 Main')
 
@@ -19,7 +18,7 @@ RSpec.describe 'Factory' do
   end
 
   it 'creates standalone class' do
-    Customer = Factory.new(:name, :address) do
+    Customer = described_class.new(:name, :address) do
       def greeting
         "Hello #{name}!"
       end
@@ -31,7 +30,7 @@ RSpec.describe 'Factory' do
   end
 
   it 'raises ArgumentError when extra args passed' do
-    Customer = Factory.new(:name, :address) do
+    Customer = described_class.new(:name, :address) do
       def greeting
         "Hello #{name}!"
       end
@@ -41,7 +40,7 @@ RSpec.describe 'Factory' do
   end
 
   it 'equality operator works as expected' do
-    Customer = Factory.new(:name, :address, :zip)
+    Customer = described_class.new(:name, :address, :zip)
 
     joe = Customer.new('Joe Smith', '123 Maple, Anytown NC', 12_345)
     joejr = Customer.new('Joe Smith', '123 Maple, Anytown NC', 12_345)
@@ -53,7 +52,7 @@ RSpec.describe 'Factory' do
   end
 
   it 'attribute reference operator works as expected' do
-    Customer = Factory.new(:name, :address, :zip)
+    Customer = described_class.new(:name, :address, :zip)
 
     joe = Customer.new('Joe Smith', '123 Maple, Anytown NC', 12_345)
 
@@ -63,7 +62,7 @@ RSpec.describe 'Factory' do
   end
 
   it 'attribute assignment operator works as expected' do
-    Customer = Factory.new(:name, :address, :zip)
+    Customer = described_class.new(:name, :address, :zip)
 
     joe = Customer.new('Joe Smith', '123 Maple, Anytown NC', 12_345)
 
@@ -75,7 +74,7 @@ RSpec.describe 'Factory' do
   end
 
   it 'dig works as expected' do
-    Customer = Factory.new(:a)
+    Customer = described_class.new(:a)
 
     c = Customer.new(Customer.new(b: [1, 2, 3]))
 
@@ -86,31 +85,25 @@ RSpec.describe 'Factory' do
   end
 
   it 'each works as expected' do
-    Customer = Factory.new(:name, :address, :zip)
+    Customer = described_class.new(:name, :address, :zip)
 
     joe = Customer.new('Joe Smith', '123 Maple, Anytown NC', 12_345)
 
-    each_elements = []
-
-    joe.each { |x| each_elements << x }
-
-    expect(each_elements).to match_array(['Joe Smith', '123 Maple, Anytown NC', 12_345])
+    expect(joe.each.to_a).to match_array(['Joe Smith', '123 Maple, Anytown NC', 12_345])
   end
 
   it 'each_pair works as expected' do
-    Customer = Factory.new(:name, :address, :zip)
+    Customer = described_class.new(:name, :address, :zip)
 
     joe = Customer.new('Joe Smith', '123 Maple, Anytown NC', 12_345)
 
-    each_elements = []
-
-    joe.each_pair { |name, value| each_elements << "#{name} => #{value}" }
+    each_elements = joe.each_pair.map { |name, value| "#{name} => #{value}" }
 
     expect(each_elements).to match_array(['name => Joe Smith', 'address => 123 Maple, Anytown NC', 'zip => 12345'])
   end
 
   it 'length (size) works as expected' do
-    Customer = Factory.new(:name, :address, :zip)
+    Customer = described_class.new(:name, :address, :zip)
 
     joe = Customer.new('Joe Smith', '123 Maple, Anytown NC', 12_345)
 
@@ -119,7 +112,7 @@ RSpec.describe 'Factory' do
   end
 
   it 'members works as expected' do
-    Customer = Factory.new(:name, :address, :zip)
+    Customer = described_class.new(:name, :address, :zip)
 
     joe = Customer.new('Joe Smith', '123 Maple, Anytown NC', 12_345)
 
@@ -127,7 +120,7 @@ RSpec.describe 'Factory' do
   end
 
   it 'selects works as expected' do
-    Customer = Factory.new(:a, :b, :c, :d, :e, :f)
+    Customer = described_class.new(:a, :b, :c, :d, :e, :f)
 
     l = Customer.new(11, 22, 33, 44, 55, 66)
 
@@ -137,7 +130,7 @@ RSpec.describe 'Factory' do
   end
 
   it 'to_a works as expected' do
-    Customer = Factory.new(:name, :address, :zip)
+    Customer = described_class.new(:name, :address, :zip)
 
     joe = Customer.new('Joe Smith', '123 Maple, Anytown NC', 12_345)
 
@@ -145,7 +138,7 @@ RSpec.describe 'Factory' do
   end
 
   it 'values_at works as expected' do
-    Customer = Factory.new(:name, :address, :zip)
+    Customer = described_class.new(:name, :address, :zip)
 
     joe = Customer.new('Joe Smith', '123 Maple, Anytown NC', 12_345)
 

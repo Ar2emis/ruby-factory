@@ -1,0 +1,31 @@
+require:
+  - rubocop-performance
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 2.7.2
+  NewCops: enable
+
+Layout/LineLength:
+  Max: 120
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*.rb'
+
+Lint/ConstantDefinitionInBlock:
+  Exclude:
+    - 'spec/**/*.rb'
+
+RSpec/LeakyConstantDeclaration:
+  Exclude:
+    - 'spec/**/*.rb'
+
+RSpec/MultipleExpectations:
+  Max: 3
+
+RSpec/ExampleLength:
+  Max: 7
