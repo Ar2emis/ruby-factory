@@ -5,6 +5,11 @@ class Factory
     extend Forwardable
     include Comparable
 
+    def_delegators :context, :to_h
+    def_delegators :to_h, :dig, :each_pair
+    def_delegators :members, :length, :size
+    def_delegators :to_a, :each, :select, :values_at
+
     def members
       self.class.members
     end
@@ -37,26 +42,8 @@ class Factory
       nil
     end
 
-    def to_h
-      context.to_h
-    end
-
-    def_delegators :to_h, :dig
-
-    def length
-      members.count
-    end
-
-    alias size length
-
-    def each_pair
-      context.each
-    end
-
     def to_a
       context.map(&:last)
     end
-
-    def_delegators :to_a, :each, :select, :values_at
   end
 end

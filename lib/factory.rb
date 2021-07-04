@@ -18,9 +18,7 @@
 # - ==, eql?
 
 require 'forwardable'
-
 require_relative 'factory/instance_methods'
-require_relative 'factory/class_methods'
 
 class Factory
   class << self
@@ -28,8 +26,8 @@ class Factory
       creatable = creatable(args)
       class_args = args.map(&:to_sym)
       creatable.instance_variable_set(:@members, class_args)
+      class_args.each { |arg| creatable.send(:attr_accessor, arg) }
       creatable.class_eval(&extra_behavior) if extra_behavior
-      add_accessors(creatable, class_args)
       creatable
     end
 
@@ -37,14 +35,12 @@ class Factory
 
     def creatable(args)
       creatable = Class.new do
-        extend ClassMethods
+        class << self
+          attr_reader :members
+        end
         include InstanceMethods
       end
       args.first.is_a?(String) ? Factory.const_set(args.shift.to_s.capitalize, creatable) : creatable
-    end
-
-    def add_accessors(creatable, class_args)
-      class_args.each { |arg| creatable.send(:attr_accessor, arg) }
     end
   end
 end
